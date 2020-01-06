@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.10'
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+
+group 'com.xiaoheiban.bigdata.accelerator'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    pluginName 'Accelerator'
+    sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
+//    version '2019.2.3'
+    type 'IU'
+    plugins = ['DatabaseTools']
+}
+
+patchPluginXml {
+    sinceBuild 192
+    untilBuild ''
+
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}

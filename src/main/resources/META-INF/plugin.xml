@@ -1,0 +1,35 @@
+<idea-plugin>
+    <id>com.xiaoheiban.bigdata.accelerator.Accelerator</id>
+    <name>Bigdata Accelerator</name>
+    <vendor email="bigdata@xiaoheiban.cn" url="http://www.xiaoheiban.cn">Bigdata Accelerator</vendor>
+
+    <description>Bigdata Accelerator</description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <!--必须为企业版-->
+    <depends>com.intellij.modules.lang</depends>
+    <!--必须依赖Database Tool插件-->
+    <depends>com.intellij.database</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+    <actions>
+<!--        <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">-->
+<!--            <add-to-group group-id="MainMenu" anchor="last"/>-->
+<!--            <action id="Myplugin.Textboxes" class="HelloAction" text="Hello" description="Says hello"/>-->
+<!--        </group>-->
+        <!-- Add your actions here -->
+        <action id="BigdataAccelerator.SuperExecute"
+                class="cn.xiaoheiban.bigdata.accelerator.GoExecuteAction"
+                text="SuperExecute"
+                description="SuperExecute">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
