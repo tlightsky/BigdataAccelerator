@@ -20,10 +20,10 @@ public class GoExecuteAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         final Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
         // save text
-//        String originSelected = editor.getSelectionModel().getSelectedText();
+        String originSelected = editor.getSelectionModel().getSelectedText();
         String originText = editor.getDocument().getText();
         // parse first line to param
-        HashMap<String, String> paramMap = toParamMap(removeComment(firstLine(originText)));
+        HashMap<String, String> paramMap = toParamMap(removeComment(firstLine(originSelected)));
         String targetText = replaceByParam(paramMap, originText);
 
         // replace sql
