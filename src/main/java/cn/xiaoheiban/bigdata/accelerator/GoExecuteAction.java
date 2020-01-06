@@ -22,11 +22,9 @@ public class GoExecuteAction extends AnAction {
         // save text
 //        String originSelected = editor.getSelectionModel().getSelectedText();
         String originText = editor.getDocument().getText();
-        alert(e, originText);
         // parse first line to param
         HashMap<String, String> paramMap = toParamMap(removeComment(firstLine(originText)));
         String targetText = replaceByParam(paramMap, originText);
-        alert(e, targetText);
 
         // replace sql
         editor.getDocument().setText(targetText);
