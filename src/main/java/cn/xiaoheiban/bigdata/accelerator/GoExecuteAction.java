@@ -79,12 +79,20 @@ public class GoExecuteAction extends AnAction {
     }
 
     public String firstCommentLine(String text) {
-        text = text.substring(text.indexOf("--"));
-        return text.substring(0, text.indexOf("\n"));
+        int index = text.indexOf("---");
+        if (index == -1) {
+            return "";
+        }
+        text = text.substring(index);
+        index = text.indexOf("\n");
+        if (index == -1) {
+            return "";
+        }
+        return text.substring(0, index);
     }
 
     public String removeComment(String text) {
-        return text.replaceAll("--","");
+        return text.replaceAll("---","");
     }
 
     public void alert(AnActionEvent event, String text) {
