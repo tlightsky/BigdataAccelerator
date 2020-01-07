@@ -7,6 +7,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.pom.Navigatable;
@@ -52,6 +53,10 @@ public class GoExecuteAction extends AnAction {
                 // put write to write action thread later
                 document.setText(originText);
                 selection.setSelection(start, end);
+
+//                for (int i=0; i<document.getLineCount()/2; i++) {
+//                    editor.getMarkupModel().addLineHighlighter(i, 0, null);
+//                }
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);
