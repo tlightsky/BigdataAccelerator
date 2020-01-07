@@ -2,11 +2,14 @@ package cn.xiaoheiban.bigdata.accelerator;
 
 import com.intellij.database.actions.RunQueryAction;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
 
 import java.util.HashMap;
 
@@ -19,28 +22,39 @@ public class GoExecuteAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         final Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
+        final Project project = e.getRequiredData(CommonDataKeys.PROJECT);
+        final Document document = editor.getDocument();
+        final SelectionModel selection = editor.getSelectionModel();
+        final int start = selection.getSelectionStart();
+        final int end = selection.getSelectionEnd();
         // save text
         String originSelected = editor.getSelectionModel().getSelectedText();
         String originText = editor.getDocument().getText();
         // parse first line to param
-        HashMap<String, String> paramMap = toParamMap(removeComment(firstLine(originSelected)));
+        HashMap<String, String> paramMap = toParamMap(removeComment(firstCommentLine(originText)));
         String targetText = replaceByParam(paramMap, originText);
 
-        // replace sql
-        editor.getDocument().setText(targetText);
-//            editor.getDocument().setText("SELECT 1;");
-
-        // execute
-        RunQueryAction rqa = (RunQueryAction) ActionManager.getInstance().getAction(ActionID_Console_JDBC_EXECUTE);
-        rqa.actionPerformed(e);
-
-        editor.getDocument().setText(originText);
-
-        // restore
-
-//        final EditorActionManagerImpl actionManager = (EditorActionManagerImpl) EditorActionManager.getInstance();
-//        final EditorActionHandler consoleActionHandler = actionManager.getActionHandler(ActionID_Console_JDBC_EXECUTE);
-//        consoleActionHandler.execute(editor, editor.getCaretModel().getPrimaryCaret(), event.getDataContext());
+//        WriteCommandAction.runWriteCommandAction(project, () ->
+//                document.setText(targetText)
+//        );
+//        RunQueryAction rqa = (RunQueryAction) ActionManager.getInstance().getAction(ActionID_Console_JDBC_EXECUTE);
+//        rqa.actionPerformed(e);
+//        WriteCommandAction.runWriteCommandAction(project, () ->
+//                document.setText(originText)
+//        );
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                document.setText(targetText);
+                RunQueryAction rqa = (RunQueryAction) ActionManager.getInstance().getAction(ActionID_Console_JDBC_EXECUTE);
+                rqa.actionPerformed(e);
+                // TODO: https://intellij-support.jetbrains.com/hc/en-us/community/posts/206754235-Write-access-is-allowed-inside-write-action-only-see-com-intellij-openapi-application-Application-runWriteAction-
+                // put write to write action thread later
+                document.setText(originText);
+                selection.setSelection(start, end);
+            }
+        };
+        ApplicationManager.getApplication().runWriteAction(runnable);
     }
 
     public String replaceByParam(HashMap<String, String> map, String originText) {
@@ -64,7 +78,8 @@ public class GoExecuteAction extends AnAction {
         return map;
     }
 
-    public String firstLine(String text) {
+    public String firstCommentLine(String text) {
+        text = text.substring(text.indexOf("--"));
         return text.substring(0, text.indexOf("\n"));
     }
 
