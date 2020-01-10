@@ -3,11 +3,9 @@ package cn.xiaoheiban.bigdata.accelerator;
 import com.intellij.database.actions.RunQueryAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.pom.Navigatable;
@@ -32,7 +30,7 @@ public class GoExecuteAction extends AnAction {
         String originSelected = editor.getSelectionModel().getSelectedText();
         String originText = editor.getDocument().getText();
         // parse first line to param
-        HashMap<String, String> paramMap = toParamMap(removeComment(firstCommentLine(originText)));
+        HashMap<String, String> paramMap = toParamMap(removeCommentMark(firstCommentLine(originText)));
         String targetText = replaceByParam(paramMap, originText);
 
 //        WriteCommandAction.runWriteCommandAction(project, () ->
@@ -83,7 +81,7 @@ public class GoExecuteAction extends AnAction {
         return map;
     }
 
-    public String firstCommentLine(String text) {
+    public static String firstCommentLine(String text) {
         int index = text.indexOf("---");
         if (index == -1) {
             return "";
@@ -96,7 +94,7 @@ public class GoExecuteAction extends AnAction {
         return text.substring(0, index);
     }
 
-    public String removeComment(String text) {
+    public static String removeCommentMark(String text) {
         return text.replaceAll("---","");
     }
 

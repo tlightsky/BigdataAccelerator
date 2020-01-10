@@ -31,5 +31,11 @@
                 description="SuperExecute">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
+        <action id="BigdataAccelerator.SQLSyncer"
+                class="cn.xiaoheiban.bigdata.accelerator.SQLSyncer"
+                text="SQLSyncer"
+                description="SQLSyncer">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
