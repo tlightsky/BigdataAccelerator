@@ -6,7 +6,7 @@ it have 2 features now:
 
 ### 1
 
-replace sql param like this:
+replace sql param like this(mainly for copy from/to grafana without change):
 
 ```SQL
 --- $a=1
