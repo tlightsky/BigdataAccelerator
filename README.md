@@ -18,28 +18,29 @@ SELECT $a
 sync sql snippet to other files under parent parent folder
 
 * before sync
-A.sql
 ```SQL
+-- A.sql
 --- toSyncSnippet {
 SELECT 1
 --}
 ```
 
-B.sql
 ```SQL
+-- B.sql
 --- toSyncSnippet {
 --}
 ```
 
 * after run sql sync on file A.sql
 ```SQL
+-- A.sql
 --- toSyncSnippet {
 SELECT 1
 --}
 ```
 
-B.sql
 ```SQL
+-- B.sql
 --- toSyncSnippet {
 SELECT 1
 --}
