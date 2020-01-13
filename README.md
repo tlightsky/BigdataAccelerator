@@ -35,14 +35,14 @@ SELECT 1
 * after run sql sync on file A.sql
 ```SQL
 -- A.sql
---- toSyncSnippet {
+-- toSyncSnippet {
 SELECT 1
 --}
 ```
 
 ```SQL
 -- B.sql
---- toSyncSnippet {
+-- toSyncSnippet {
 SELECT 1
 --}
 ```
