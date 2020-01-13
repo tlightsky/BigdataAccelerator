@@ -6,12 +6,13 @@ it have 2 features now:
 
 ### 1
 
-replace sql param like this(mainly for copy from/to grafana without change):
+replace sql param like this:
 
 ```SQL
 --- $a=1
 SELECT $a
 ```
+(mainly for copy from/to grafana without change)
 
 ### 2
 
