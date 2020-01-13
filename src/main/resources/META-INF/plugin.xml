@@ -37,5 +37,11 @@
                 description="SQLSyncer">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
+        <action id="BigdataAccelerator.SQLSyncerSplit"
+                class="cn.xiaoheiban.bigdata.accelerator.SQLSyncerSplit"
+                text="SQLSyncerSplit"
+                description="SQLSyncerSplit">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>

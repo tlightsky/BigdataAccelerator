@@ -6,7 +6,7 @@ it have 2 features now:
 
 ### 1
 
-replace sql param like this:
+replace sql param like this(start with three -):
 
 ```SQL
 --- $a=1
@@ -21,14 +21,14 @@ sync sql snippet to other files under parent parent folder
 * before sync
 ```SQL
 -- A.sql
---- toSyncSnippet {
+-- toSyncSnippet {
 SELECT 1
 --}
 ```
 
 ```SQL
 -- B.sql
---- toSyncSnippet {
+-- toSyncSnippet {
 --}
 ```
 

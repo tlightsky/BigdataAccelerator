@@ -1,5 +1,6 @@
 package cn.xiaoheiban.bigdata.accelerator;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.database.actions.RunQueryAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -55,6 +56,7 @@ public class GoExecuteAction extends AnAction {
 //                for (int i=0; i<document.getLineCount()/2; i++) {
 //                    editor.getMarkupModel().addLineHighlighter(i, 0, null);
 //                }
+                DaemonCodeAnalyzer.getInstance(project).restart();
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);

@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SQLSyncer extends AnAction {
-    public SQLSyncer() {
-        super("SQLSyncer");
+public class SQLSyncerSplit extends AnAction {
+    public SQLSyncerSplit() {
+        super("SQLSyncerSplit");
     }
 
     public void actionPerformed(AnActionEvent e) {
@@ -34,13 +34,13 @@ public class SQLSyncer extends AnAction {
 
         // save text
         String currentContent = editor.getDocument().getText();
-        HashMap<String, String> snippetMap = extractSnippet(currentContent);
+        HashMap<String, String> snippetMap = SQLSyncer.extractSnippet(currentContent);
         VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
         VirtualFile pp = currentFile.getParent().getParent();
+
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-
                 VfsUtilCore.iterateChildrenRecursively(pp, null, fileOrDir -> {
                     if(fileOrDir.getCanonicalPath().equals(currentFile.getCanonicalPath())) {
                         return true;
@@ -50,7 +50,7 @@ public class SQLSyncer extends AnAction {
                     }
                     try {
                         String content = new String(fileOrDir.contentsToByteArray());
-                        String newContent = syncSql(content, snippetMap);
+                        String newContent = splitSql(content, snippetMap);
                         if(newContent.equals(content)) {
                             return true;
                         }
@@ -62,46 +62,17 @@ public class SQLSyncer extends AnAction {
                     }
                     return true;
                 });
-                document.setText(syncSql(currentContent, snippetMap));
+                document.setText(splitSql(currentContent, snippetMap));
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);
     }
 
-    public static String snippetStart = "(\\n-- (";
-    public static String snippetEnd = ") \\{[\\s\\S]*?\\n--})";
-    public static Pattern snippetPattern = Pattern.compile(snippetStart+"\\w+"+snippetEnd);
-
-    public static String syncSql(String target, HashMap<String, String> snippet) {
+    public static String splitSql(String target, HashMap<String, String> snippet) {
         for(Map.Entry<String, String> entry  : snippet.entrySet()) {
-            String pattern = snippetStart+entry.getKey()+snippetEnd;
+            String pattern = SQLSyncer.snippetStart+entry.getKey()+SQLSyncer.snippetEnd;
             target = target.replaceAll(pattern, entry.getValue().replace("$", "\\$"));
         }
         return target;
-    }
-
-    public static HashMap<String, String> extractSnippet(String text) {
-        HashMap<String, String> snippet = new HashMap<>();
-        Matcher m = snippetPattern.matcher(text);
-        while(m.find()) {
-            if(m.groupCount()!=2) {
-                continue;
-            }
-            if(snippet.containsKey(m.group(2))) {
-                continue;
-            }
-            snippet.put(m.group(2), m.group(1));
-        }
-        return snippet;
-    }
-
-    public static void alert(AnActionEvent event, String text) {
-        Project currentProject = event.getProject();
-        StringBuffer dlgMsg = new StringBuffer(text);
-        String dlgTitle = event.getPresentation().getDescription();
-        // If an element is selected in the editor, add info about it.
-        Navigatable nav = event.getData(CommonDataKeys.NAVIGATABLE);
-        Messages.showMessageDialog(currentProject, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
-
     }
 }
