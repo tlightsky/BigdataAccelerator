@@ -1,26 +1,17 @@
 package cn.xiaoheiban.bigdata.accelerator;
 
-import com.intellij.database.actions.RunQueryAction;
-import com.intellij.ide.plugins.PluginManager;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.pom.Navigatable;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +40,7 @@ public class SQLSyncer extends AnAction {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+
                 VfsUtilCore.iterateChildrenRecursively(pp, null, fileOrDir -> {
                     if(fileOrDir.getCanonicalPath().equals(currentFile.getCanonicalPath())) {
                         return true;
@@ -58,17 +50,19 @@ public class SQLSyncer extends AnAction {
                     }
                     try {
                         String content = new String(fileOrDir.contentsToByteArray());
-                        content = syncSql(content, snippetMap);
+                        String newContent = syncSql(content, snippetMap);
+                        if(newContent.equals(content)) {
+                            return true;
+                        }
                         if(fileOrDir.isWritable()) {
-                            fileOrDir.setBinaryContent(content.getBytes());
+                            fileOrDir.setBinaryContent(newContent.getBytes());
                         }
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                     return true;
                 });
-//                document.setText(targetText);
-
+                document.setText(syncSql(currentContent, snippetMap));
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);
@@ -91,6 +85,9 @@ public class SQLSyncer extends AnAction {
         Matcher m = snippetPattern.matcher(text);
         while(m.find()) {
             if(m.groupCount()!=2) {
+                continue;
+            }
+            if(snippet.containsKey(m.group(2))) {
                 continue;
             }
             snippet.put(m.group(2), m.group(1));
