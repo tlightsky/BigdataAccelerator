@@ -2,7 +2,7 @@
 # Bigdata Accelerator
 
 this is a jetbrains plugin in for datagrip/database tool,
-it have 2 feature now:
+it have 2 features now:
 
 ### 1
 
