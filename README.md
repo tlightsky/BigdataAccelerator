@@ -44,3 +44,10 @@ B.sql
 SELECT 1
 --}
 ```
+
+## How to use
+* Right Click on sql file, find the right item
+
+## How to Install
+* From Preference/plugin
+![Preference/plugin](images/HowToInstall.png)
