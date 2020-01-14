@@ -1,7 +1,6 @@
 package cn.xiaoheiban.bigdata.accelerator;
 
 import cn.xiaoheiban.bigdata.accelerator.ui.SplitDialog;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -19,10 +18,14 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SQLSyncerSplit extends AnAction {
-    public SQLSyncerSplit() {
-        super("SQLSyncerSplit");
+public class SQLSyncerRename extends AnAction {
+    public SQLSyncerRename() {
+        super("SQLSyncerRename");
     }
+
+    public static String snippetStart = "(-- (";
+    public static String snippetEnd = ") \\{[\\s\\S]*?\\n--})";
+    public static Pattern snippetPattern = Pattern.compile(snippetStart+"\\w+"+snippetEnd);
 
     public void actionPerformed(AnActionEvent e) {
         final Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
@@ -34,21 +37,19 @@ public class SQLSyncerSplit extends AnAction {
         // save text
         String currentContent = editor.getDocument().getText();
         HashMap<String, String> snippetMap = Shared.extractSnippet(currentContent);
-
-        String[] splitReplace = splitedSQL(currentContent, start, "", document);
+        String[] splitReplace = renameSQL(start, "", document);
         if(splitReplace.length!=2) {
             Shared.alert(e, "Not inside a block");
             return;
         }
 
-        SplitDialog sd = new SplitDialog("Block name", "Input second part name", splitReplace[0]);
+        SplitDialog sd = new SplitDialog("Rename block", "Input new name", splitReplace[0]);
         if(!sd.showAndGet()) {
             // user pressed ok
             return;
         }
-        String p2Name = sd.getBlockName();
-        splitReplace = splitedSQL(currentContent, start, p2Name, document);
-//        SQLSyncer.alert(e, splitReplace[0]+"\n=========================\n"+splitReplace[1]);
+        String renameName = sd.getBlockName();
+        splitReplace = renameSQL(start, renameName, document);
         snippetMap.put(splitReplace[0], splitReplace[1]);
 
         VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
@@ -78,20 +79,20 @@ public class SQLSyncerSplit extends AnAction {
                     return true;
                 });
                 document.setText(SQLSyncer.syncSQL(currentContent, snippetMap));
-                DaemonCodeAnalyzer.getInstance(project).restart();
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);
     }
-    public static String splitFormat = "\n--}\n-- %s {\n";
+    public static String searchPattern = "-- (\\w+) \\{";
+    public static String replacePattern = "-- %s \\{";
 
-    public static String[] splitedSQL(String text, int start, String p2Name, Document document) {
+    public static String[] renameSQL(int start, String renameName, Document document) {
         String[] keyP1P2 = Shared.toKeyP1P2(start, document);
         if(keyP1P2.length != 3 ) {
             return keyP1P2;
         }
+        keyP1P2[1] = keyP1P2[1].replaceFirst(searchPattern, String.format(replacePattern, renameName));
 
-        String split = String.format(splitFormat, p2Name);
-        return new String[]{keyP1P2[0], keyP1P2[1]+split+keyP1P2[2]};
+        return new String[]{keyP1P2[0], keyP1P2[1]+"\n"+keyP1P2[2]};
     }
 }

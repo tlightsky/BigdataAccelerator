@@ -2,7 +2,7 @@
 # Bigdata Accelerator
 
 this is a jetbrains plugin in for datagrip/database tool,
-it have 2 features now:
+it have 4 features now:
 
 ### 1
 
@@ -46,6 +46,12 @@ SELECT 1
 SELECT 1
 --}
 ```
+
+### 3
+* Rename sync block name
+
+### 4
+* split block to 2 blocks
 
 ## How to use
 * Right Click on sql file, find the right item

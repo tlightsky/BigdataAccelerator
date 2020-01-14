@@ -1,5 +1,6 @@
 package cn.xiaoheiban.bigdata.accelerator;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -28,13 +29,10 @@ public class SQLSyncer extends AnAction {
         final Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
         final Project project = e.getRequiredData(CommonDataKeys.PROJECT);
         final Document document = editor.getDocument();
-//        final SelectionModel selection = editor.getSelectionModel();
-//        final int start = selection.getSelectionStart();
-//        final int end = selection.getSelectionEnd();
 
         // save text
         String currentContent = editor.getDocument().getText();
-        HashMap<String, String> snippetMap = extractSnippet(currentContent);
+        HashMap<String, String> snippetMap = Shared.extractSnippet(currentContent);
         VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
         VirtualFile pp = currentFile.getParent().getParent();
         Runnable runnable = new Runnable() {
@@ -50,7 +48,7 @@ public class SQLSyncer extends AnAction {
                     }
                     try {
                         String content = new String(fileOrDir.contentsToByteArray());
-                        String newContent = syncSql(content, snippetMap);
+                        String newContent = syncSQL(content, snippetMap);
                         if(newContent.equals(content)) {
                             return true;
                         }
@@ -62,46 +60,18 @@ public class SQLSyncer extends AnAction {
                     }
                     return true;
                 });
-                document.setText(syncSql(currentContent, snippetMap));
+                document.setText(syncSQL(currentContent, snippetMap));
+                DaemonCodeAnalyzer.getInstance(project).restart();
             }
         };
         ApplicationManager.getApplication().runWriteAction(runnable);
     }
 
-    public static String snippetStart = "(\\n-- (";
-    public static String snippetEnd = ") \\{[\\s\\S]*?\\n--})";
-    public static Pattern snippetPattern = Pattern.compile(snippetStart+"\\w+"+snippetEnd);
-
-    public static String syncSql(String target, HashMap<String, String> snippet) {
+    public static String syncSQL(String target, HashMap<String, String> snippet) {
         for(Map.Entry<String, String> entry  : snippet.entrySet()) {
-            String pattern = snippetStart+entry.getKey()+snippetEnd;
+            String pattern = Shared.snippetStart+entry.getKey()+Shared.snippetEnd;
             target = target.replaceAll(pattern, entry.getValue().replace("$", "\\$"));
         }
         return target;
-    }
-
-    public static HashMap<String, String> extractSnippet(String text) {
-        HashMap<String, String> snippet = new HashMap<>();
-        Matcher m = snippetPattern.matcher(text);
-        while(m.find()) {
-            if(m.groupCount()!=2) {
-                continue;
-            }
-            if(snippet.containsKey(m.group(2))) {
-                continue;
-            }
-            snippet.put(m.group(2), m.group(1));
-        }
-        return snippet;
-    }
-
-    public static void alert(AnActionEvent event, String text) {
-        Project currentProject = event.getProject();
-        StringBuffer dlgMsg = new StringBuffer(text);
-        String dlgTitle = event.getPresentation().getDescription();
-        // If an element is selected in the editor, add info about it.
-        Navigatable nav = event.getData(CommonDataKeys.NAVIGATABLE);
-        Messages.showMessageDialog(currentProject, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
-
     }
 }

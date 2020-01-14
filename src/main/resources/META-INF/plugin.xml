@@ -20,28 +20,34 @@
         <!-- Add your extensions here -->
     </extensions>
     <actions>
-<!--        <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">-->
-<!--            <add-to-group group-id="MainMenu" anchor="last"/>-->
-<!--            <action id="Myplugin.Textboxes" class="HelloAction" text="Hello" description="Says hello"/>-->
-<!--        </group>-->
-        <!-- Add your actions here -->
-        <action id="BigdataAccelerator.SuperExecute"
-                class="cn.xiaoheiban.bigdata.accelerator.GoExecuteAction"
-                text="SuperExecute"
-                description="SuperExecute">
+        <group id="BigdataAccelerator" text="BigdataAccelerator" description="BigdataAccelerator"
+            popup="true">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
-        <action id="BigdataAccelerator.SQLSyncer"
-                class="cn.xiaoheiban.bigdata.accelerator.SQLSyncer"
-                text="SQLSyncer"
-                description="SQLSyncer">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
-        <action id="BigdataAccelerator.SQLSyncerSplit"
-                class="cn.xiaoheiban.bigdata.accelerator.SQLSyncerSplit"
-                text="SQLSyncerSplit"
-                description="SQLSyncerSplit">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
+            <!-- Add your actions here -->
+                <action id="BigdataAccelerator.SuperExecute"
+                        class="cn.xiaoheiban.bigdata.accelerator.GoExecuteAction"
+                        text="SuperExecute"
+                        description="SuperExecute">
+                    <add-to-group group-id="BigdataAccelerator" anchor="first"/>
+                </action>
+                <action id="BigdataAccelerator.SQLSyncer"
+                        class="cn.xiaoheiban.bigdata.accelerator.SQLSyncer"
+                        text="SQLSyncer"
+                        description="SQLSyncer">
+                    <add-to-group group-id="BigdataAccelerator" anchor="first"/>
+                </action>
+                <action id="BigdataAccelerator.SQLSyncerSplit"
+                        class="cn.xiaoheiban.bigdata.accelerator.SQLSyncerSplit"
+                        text="SQLSyncerSplit"
+                        description="SQLSyncerSplit">
+                    <add-to-group group-id="BigdataAccelerator" anchor="first"/>
+                </action>
+                <action id="BigdataAccelerator.SQLSyncerRename"
+                        class="cn.xiaoheiban.bigdata.accelerator.SQLSyncerRename"
+                        text="SQLSyncerRename"
+                        description="SQLSyncerRename">
+                    <add-to-group group-id="BigdataAccelerator" anchor="first"/>
+                </action>
+        </group>
     </actions>
 </idea-plugin>
